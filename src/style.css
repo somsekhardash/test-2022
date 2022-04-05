@@ -1,0 +1,14 @@
+h1,
+p {
+  font-family: Lato;
+}
+
+#root {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.user-booth {
+  width: 28%;
+  margin: 2%;
+}
