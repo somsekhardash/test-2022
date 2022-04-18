@@ -1,7 +1,7 @@
 import React from 'react';
 import './style.css';
 
-const users = ['GUDDI', 'MUKTI', 'MAMUNI APA', 'PRITI', 'RANJIT BHAINA', 'BIKRAM BHAINA'];
+const users = ['GU', 'MU', 'MA', 'PR', 'RN', 'BK'];
 const dmatches = [
   {
     MatchNumber: 1,
@@ -778,7 +778,7 @@ const dmatches = [
 export default function App() {
   const [matches, setMatches] = React.useState(dmatches);
   const [results, setResults] = React.useState({});
-
+  const [userResults, setUserResults] = React.useState({});
   React.useEffect(() => {
     fetch('https://api.npoint.io/12b0bd7c11bfc3c63730', {
       headers: {
@@ -846,6 +846,7 @@ export default function App() {
   };
 
   const UserBooth = ({ match }) => {
+    const result = results[match.MatchNumber];
     return (
       <div className="user-booth">
         <b>Match Number {match.MatchNumber}</b>
@@ -856,7 +857,7 @@ export default function App() {
             name={`match${match.MatchNumber}`}
             data-matchnumber={match.MatchNumber}
             value={match.HomeTeam}
-            checked={match.team === match.HomeTeam}
+            checked={result && result.team === match.HomeTeam}
             onChange={onRadioChange}
           />
             <label htmlFor={match.HomeTeam}>{match.HomeTeam}</label>
@@ -867,7 +868,7 @@ export default function App() {
             name={`match${match.MatchNumber}`}
             data-matchnumber={match.MatchNumber}
             value={match.AwayTeam}
-            checked={match.team === match.AwayTeam}
+            checked={result && result.team === match.AwayTeam}
             onChange={onRadioChange}
           />
             <label htmlFor={match.AwayTeam}>{match.AwayTeam}</label>
@@ -883,7 +884,7 @@ export default function App() {
                   data-matchnumber={match.MatchNumber}
                   value={user}
                   checked={
-                    match.winner ? match.winner.indexOf(user) > -1 : false
+                    result ? result?.winner.indexOf(user) > -1 : false
                   }
                   onChange={onCheckChange}
                 />
@@ -916,7 +917,19 @@ export default function App() {
   };
 
   const onClickScore = () => {
-
+      const fee = 20;
+      const total = users.length * fee;
+      const dash = users.reduce((res,user)=>{
+        res[user] = 0;
+        return res;
+      },{});
+      const som = Object.keys(results).reduce((res, match)=>{  
+        results[match].winner.forEach((player)=>{
+          res[player] = res[player] + total/results[match].winner.length 
+        });
+        return res;
+      }, dash);
+      setUserResults({...som});
   }
 
   return (
@@ -924,6 +937,11 @@ export default function App() {
       {matches.map((match, index) => (
         <UserBooth match={match} key={index} />
       ))}
+       <div className='user-result'>
+          {userResults && Object.keys(userResults).map((user)=>{
+            return <div>{user} - {userResults[user]} / {Object.keys(results).length * 20}</div>
+          })}
+        </div>
       <button type="button" onClick={onFormSubmit}>
         Submit!
       </button>
