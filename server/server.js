@@ -97,6 +97,11 @@ const typeDefs = gql`
     matchResults: [Result],
     results: String
   }
+
+  type Mutation {
+    updateMatch(matchNumber: Int, team: String, winner: [String]): [Result]
+  }
+
 `;
 
 const getData = async () => {
@@ -190,6 +195,37 @@ const resolvers = {
       return data;
     }
   },
+  Mutation: {
+    updateMatch: async (_, { matchNumber, team, winner }, {matchResults}) => {
+      const matches = await matchResults;
+      matches[matchNumber] = {
+        team, winner
+      }
+      const data =  Object.keys(matches).map((match) => {
+        return {
+          matchNumber: match,
+          team: matches[match].team,
+          winner: matches[match].winner, 
+        }
+      });
+      
+      // const requestOptions = {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(data),
+      // };
+      axios.post('https://api.npoint.io/12b0bd7c11bfc3c63730', matches)
+        .then(
+          (result) => {
+            return data;
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      
+    }
+  }
   
 };
 
