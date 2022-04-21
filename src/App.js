@@ -202,7 +202,7 @@ export default function App() {
   }
 
   if(!matches) {
-    return <p>loading...</p>
+    return <p>loading....</p>
   }
 
   return (
