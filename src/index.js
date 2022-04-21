@@ -11,7 +11,7 @@ import {
   } from "@apollo/client";
   
   const client = new ApolloClient({
-    uri: process.env.REACT_GRAPH || "http://localhost:4000/",
+    uri: process.env.REACT_GRAPH || "http://server2022play-env.eba-ugmivb3f.ap-south-1.elasticbeanstalk.com",
     cache: new InMemoryCache()
   });
     
